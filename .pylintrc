@@ -1,0 +1,5 @@
+[MESSAGES CONTROL]
+disable=invalid-name,too-few-public-methods,too-many-ancestors,unnecessary-pass
+
+[CLASSES]
+defining-attr-methods=__init__,__new__,setUp,__post_init__
