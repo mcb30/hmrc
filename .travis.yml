@@ -1,0 +1,15 @@
+language: python
+python:
+  - "3.7"
+  - "nightly"
+install:
+  - pip install -e .
+script: python -m unittest -v
+deploy:
+  provider: pypi
+  distributions: "sdist bdist_wheel"
+  skip_existing: true
+  user: $PYPI_USER
+  password: $PYPI_PASSWORD
+  on:
+    tags: true
