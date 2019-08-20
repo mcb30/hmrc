@@ -5,9 +5,12 @@ python:
 install:
   - pip install -e .
   - pip install coverage
+  - pip install coveralls
 script:
   - coverage run --branch --source hmrc setup.py test
   - coverage report --show-missing
+after_success:
+  - coveralls
 deploy:
   provider: pypi
   distributions: "sdist bdist_wheel"
