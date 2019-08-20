@@ -4,6 +4,60 @@ Data structures used within API messages are represented in Python
 using `dataclasses`, with the mapping between the Python
 representation and the HMRC API wire protocol representation handled
 automatically via introspection of the Python type annotations.
+
+>>> from decimal import Decimal
+>>> @hmrcdataclass
+... class TaxPeriodSummary(HmrcDataClass):
+...     tax_id: str
+...     start: date
+...     end: date
+...     total_income: Decimal
+...     tax_due: Decimal
+
+>>> t1 = TaxPeriodSummary.from_json('''
+...     {
+...         "taxId": "82719NH23A",
+...         "start": "2018-04-06",
+...         "end": "2019-04-05",
+...         "totalIncome": 38600.00,
+...         "taxDue": 2412.50
+...     }
+... ''')
+
+>>> t1.tax_id
+'82719NH23A'
+
+>>> t1.start.year
+2018
+
+>>> t1.total_income
+Decimal('38600.00')
+
+>>> t1.to_hmrc() # doctest: +NORMALIZE_WHITESPACE
+{'taxId': '82719NH23A', 'start': '2018-04-06', 'end': '2019-04-05',
+ 'totalIncome': Decimal('38600.00'), 'taxDue': Decimal('2412.50')}
+
+>>> t1.tax_due -= Decimal('100.00')
+
+>>> t1.to_hmrc() # doctest: +NORMALIZE_WHITESPACE
+{'taxId': '82719NH23A', 'start': '2018-04-06', 'end': '2019-04-05',
+ 'totalIncome': Decimal('38600.00'), 'taxDue': Decimal('2312.50')}
+
+>>> t2 = TaxPeriodSummary(
+...    tax_id = '543242WD69B',
+...    start = date(2015, 6, 24),
+...    end = date(2016, 6, 23),
+...    total_income = Decimal('14000.00'),
+...    tax_due = Decimal('0.00'),
+... )
+
+>>> t2.to_hmrc() # doctest: +NORMALIZE_WHITESPACE
+{'taxId': '543242WD69B', 'start': '2015-06-24', 'end': '2016-06-23',
+ 'totalIncome': Decimal('14000.00'), 'taxDue': Decimal('0.00')}
+
+>>> t2.to_json() # doctest: +NORMALIZE_WHITESPACE
+'{"taxId": "543242WD69B", "start": "2015-06-24", "end": "2016-06-23",
+  "totalIncome": 14000.00, "taxDue": 0.00}'
 """
 
 from dataclasses import dataclass, fields
