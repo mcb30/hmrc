@@ -146,7 +146,7 @@ class HmrcEndpoint:
     uri: str
     """Endpoint URI"""
 
-    method: str = 'GET'
+    method: str = None
     """HTTP method"""
 
     path: type = HmrcNoData
@@ -162,6 +162,8 @@ class HmrcEndpoint:
     """Response body type"""
 
     def __post_init__(self):
+        if self.method is None:
+            self.method = 'GET' if self.request is HmrcNoData else 'POST'
         self.template = URITemplate(self.uri)
         self.path_args = {x.name for x in fields(self.path)}
 

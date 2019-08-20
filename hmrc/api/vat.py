@@ -132,7 +132,7 @@ class VatClient(HmrcClient):
     )
 
     submit = HmrcEndpoint(
-        '/organisations/vat/{vrn}/returns', method='POST',
+        '/organisations/vat/{vrn}/returns',
         path=VatVrnParams, request=VatSubmission, response=VatConfirmation,
     )
 
