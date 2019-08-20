@@ -4,7 +4,10 @@ python:
   - "nightly"
 install:
   - pip install -e .
-script: python -m unittest -v
+  - pip install coverage
+script:
+  - coverage run --branch --source hmrc setup.py test
+  - coverage report --show-missing
 deploy:
   provider: pypi
   distributions: "sdist bdist_wheel"
