@@ -15,11 +15,19 @@ import iso8601
 import simplejson
 
 __all__ = [
+    'HmrcUnknownFieldError',
     'HmrcFieldMap',
     'HmrcTypeMap',
     'HmrcDataClass',
     'hmrcdataclass',
 ]
+
+
+class HmrcUnknownFieldError(KeyError):
+    """Unexpected HMRC API field"""
+
+    def __str__(self):
+        return 'Unknown field "%s" in %r' % self.args
 
 
 @dataclass
@@ -118,6 +126,7 @@ class HmrcDataClass:
 
     __mapping_by_name = {}
     __mapping_by_hmrc_name = {}
+    __known_hmrc_names = set()
 
     @classmethod
     def build_hmrc_mappings(cls):
@@ -130,11 +139,15 @@ class HmrcDataClass:
         ) for f in fields(cls)]
         cls.__mapping_by_name = {m.name: m for m in mappings}
         cls.__mapping_by_hmrc_name = {m.hmrc_name: m for m in mappings}
+        cls.__known_hmrc_names = set(cls.__mapping_by_hmrc_name)
 
     @classmethod
     def from_hmrc(cls, hmrc):
         """Construct Python object from HMRC API representation"""
         mapping = cls.__mapping_by_hmrc_name
+        missing = set(hmrc) - cls.__known_hmrc_names
+        if missing:
+            raise HmrcUnknownFieldError(missing.pop(), hmrc) from None
         vals = {
             mapping[k].name: mapping[k].from_hmrc(v)
             for k, v in hmrc.items()
