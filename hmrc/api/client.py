@@ -5,8 +5,9 @@ from dataclasses import dataclass, fields
 import functools
 from typing import List
 from urllib.parse import urljoin
-from requests import Session, HTTPError
+from requests import HTTPError
 from uritemplate import URITemplate
+from ..auth.session import HmrcSession
 from .data import HmrcDataClass, hmrcdataclass
 
 __all__ = [
@@ -69,20 +70,11 @@ class HmrcClientError(IOError):
 class HmrcClient(ABC):
     """HMRC API client"""
 
-    session: Session = None
+    session: HmrcSession
     """Requests session"""
 
-    test: bool = False
-    """Test mode"""
-
-    BASE_URI = 'https://api.service.hmrc.gov.uk'
-    BASE_TEST_URI = 'https://test-api.service.hmrc.gov.uk'
     REQUEST_CONTENT_TYPE = 'application/json'
     RESPONSE_CONTENT_TYPE = 'application/vnd.hmrc.1.0+json'
-
-    def __post_init__(self):
-        if self.session is None:
-            self.session = Session()
 
     def request(self, uri, *, method='GET', query=None, body=None):
         """Send request"""
@@ -94,7 +86,7 @@ class HmrcClient(ABC):
         }
 
         # Construct request
-        rsp = self.session.request(method, urljoin(self.uri, uri),
+        rsp = self.session.request(method, urljoin(self.session.uri, uri),
                                    headers=headers, params=query, data=body)
 
         # Check for errors
@@ -115,11 +107,6 @@ class HmrcClient(ABC):
             raise HmrcClientError(error) from exc
 
         return rsp.text
-
-    @property
-    def uri(self):
-        """Service base URI"""
-        return self.BASE_TEST_URI if self.test else self.BASE_URI
 
     @property
     @abstractmethod

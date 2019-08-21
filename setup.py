@@ -23,6 +23,7 @@ setup(
     install_requires=[
         'iso8601',
         'requests',
+        'requests_oauthlib',
         'simplejson',
         'uritemplate',
     ],
