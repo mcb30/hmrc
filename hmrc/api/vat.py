@@ -124,6 +124,8 @@ class VatConfirmation(VatDataClass):
 class VatClient(HmrcClient):
     """VAT API client"""
 
+    vrn: str = None
+
     scope = ['read:vat', 'write:vat']
 
     obligations = HmrcEndpoint(
@@ -140,7 +142,3 @@ class VatClient(HmrcClient):
         '/organisations/vat/{vrn}/returns/{periodKey}',
         path=VatVrnPeriodParams, response=VatReturn,
     )
-
-    def __init__(self, vrn, *, token=None, test=False):
-        super().__init__(token=token, test=test)
-        self.vrn = vrn
