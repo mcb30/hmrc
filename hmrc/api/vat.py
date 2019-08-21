@@ -19,6 +19,7 @@ __all__ = [
     'VatReturn',
     'VatSubmission',
     'VatConfirmation',
+    'VatReadOnlyClient',
     'VatClient',
 ]
 
@@ -121,24 +122,31 @@ class VatConfirmation(VatDataClass):
 
 
 @dataclass
-class VatClient(HmrcClient):
-    """VAT API client"""
+class VatReadOnlyClient(HmrcClient):
+    """VAT API client with read-only access"""
 
     vrn: str = None
 
-    scope = ['read:vat', 'write:vat']
+    scope = ['read:vat']
 
     obligations = HmrcEndpoint(
         '/organisations/vat/{vrn}/obligations',
         path=VatVrnParams, query=VatObligationsParams, response=VatObligations,
     )
 
-    submit = HmrcEndpoint(
-        '/organisations/vat/{vrn}/returns',
-        path=VatVrnParams, request=VatSubmission, response=VatConfirmation,
-    )
-
     retrieve = HmrcEndpoint(
         '/organisations/vat/{vrn}/returns/{periodKey}',
         path=VatVrnPeriodParams, response=VatReturn,
+    )
+
+
+@dataclass
+class VatClient(VatReadOnlyClient):
+    """VAT API client"""
+
+    scope = ['read:vat', 'write:vat']
+
+    submit = HmrcEndpoint(
+        '/organisations/vat/{vrn}/returns',
+        path=VatVrnParams, request=VatSubmission, response=VatConfirmation,
     )
