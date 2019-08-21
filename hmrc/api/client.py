@@ -5,7 +5,7 @@ from dataclasses import dataclass, fields
 import functools
 from typing import List
 from urllib.parse import urljoin
-from requests import Request, Session, HTTPError
+from requests import Session, HTTPError
 from oauthlib.oauth2.rfc6749.tokens import prepare_bearer_headers
 from uritemplate import URITemplate
 from .data import HmrcDataClass, hmrcdataclass
@@ -85,7 +85,7 @@ class HmrcClient(ABC):
         self.session = Session()
 
     def request(self, uri, *, method='GET', query=None, body=None):
-        """Construct request"""
+        """Send request"""
 
         # Create required headers
         headers = {
@@ -98,15 +98,8 @@ class HmrcClient(ABC):
             prepare_bearer_headers(self.token, headers)
 
         # Construct request
-        req = Request(method, urljoin(self.uri, uri), headers=headers,
-                      params=query, data=body)
-        return req
-
-    def response(self, req):
-        """Submit request and obtain response"""
-
-        # Prepare and send request
-        rsp = self.session.send(req.prepare())
+        rsp = self.session.request(method, urljoin(self.uri, uri),
+                                   headers=headers, params=query, data=body)
 
         # Check for errors
         try:
@@ -125,7 +118,7 @@ class HmrcClient(ABC):
             # Raise chained exception
             raise HmrcClientError(error) from exc
 
-        return rsp
+        return rsp.text
 
     @property
     def uri(self):
@@ -193,13 +186,12 @@ class HmrcEndpoint:
             (data,) = args
             if not hasattr(data, 'to_json'):
                 data = self.request(**data)
-            body = data.to_json().encode()
+            req = data.to_json()
         else:
-            body = None
+            req = None
 
         # Issue request
-        req = client.request(uri, method=self.method, query=query, body=body)
-        rsp = client.response(req)
+        rsp = client.request(uri, method=self.method, query=query, body=req)
 
         # Construct response
-        return self.response.from_json(rsp.text)
+        return self.response.from_json(rsp)
