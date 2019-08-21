@@ -35,12 +35,17 @@ class HmrcSession(OAuth2Session):
                 'client_secret': client_secret,
             })
 
-        super().__init__(client_id, **kwargs)
+        super().__init__(client_id, scope=[], **kwargs)
 
     def __repr__(self):
-        return '%s(%r, uri=%r)' % (
-            self.__class__.__name__, self.client_id, self.uri
+        return '%s(%r, uri=%r, scope=%r)' % (
+            self.__class__.__name__, self.client_id, self.uri, self.scope
         )
+
+    def extend_scope(self, scope):
+        """Extend OAuth2 scope"""
+        current = set(self.scope)
+        self.scope = self.scope + [x for x in scope if x not in current]
 
     def authorization_url(self, url=None, **kwargs):
         """Form an authorization URL"""

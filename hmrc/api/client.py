@@ -76,6 +76,9 @@ class HmrcClient(ABC):
     REQUEST_CONTENT_TYPE = 'application/json'
     RESPONSE_CONTENT_TYPE = 'application/vnd.hmrc.1.0+json'
 
+    def __post_init__(self):
+        self.session.extend_scope(self.scope)
+
     def request(self, uri, *, method='GET', query=None, body=None):
         """Send request"""
 
