@@ -18,7 +18,7 @@ class HmrcSession(OAuth2Session):
     TOKEN_URI = '/oauth/token'
 
     def __init__(self, client_id=None, *, client_secret=None, test=False,
-                 uri=None, **kwargs):
+                 uri=None, token=None, storage=None, **kwargs):
 
         # Construct base URI
         self.test = test
@@ -35,7 +35,13 @@ class HmrcSession(OAuth2Session):
                 'client_secret': client_secret,
             })
 
-        super().__init__(client_id, scope=[], **kwargs)
+        # Use token storage if provided
+        if storage is not None:
+            if token is None:
+                token = storage.token
+            kwargs.setdefault('token_updater', storage.save)
+
+        super().__init__(client_id, scope=[], token=token, **kwargs)
 
     def __repr__(self):
         return '%s(%r, uri=%r, scope=%r)' % (
