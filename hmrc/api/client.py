@@ -6,7 +6,6 @@ import functools
 from typing import List
 from urllib.parse import urljoin
 from requests import Session, HTTPError
-from oauthlib.oauth2.rfc6749.tokens import prepare_bearer_headers
 from uritemplate import URITemplate
 from .data import HmrcDataClass, hmrcdataclass
 
@@ -70,8 +69,8 @@ class HmrcClientError(IOError):
 class HmrcClient(ABC):
     """HMRC API client"""
 
-    token: str = None
-    """Authorisation token"""
+    session: Session = None
+    """Requests session"""
 
     test: bool = False
     """Test mode"""
@@ -82,7 +81,8 @@ class HmrcClient(ABC):
     RESPONSE_CONTENT_TYPE = 'application/vnd.hmrc.1.0+json'
 
     def __post_init__(self):
-        self.session = Session()
+        if self.session is None:
+            self.session = Session()
 
     def request(self, uri, *, method='GET', query=None, body=None):
         """Send request"""
@@ -92,10 +92,6 @@ class HmrcClient(ABC):
             'Content-Type': self.REQUEST_CONTENT_TYPE,
             'Accept': self.RESPONSE_CONTENT_TYPE,
         }
-
-        # Add authorisation token, if available
-        if self.token is not None:
-            prepare_bearer_headers(self.token, headers)
 
         # Construct request
         rsp = self.session.request(method, urljoin(self.uri, uri),

@@ -22,7 +22,6 @@ setup(
     packages=find_packages(),
     install_requires=[
         'iso8601',
-        'oauthlib',
         'requests',
         'simplejson',
         'uritemplate',
