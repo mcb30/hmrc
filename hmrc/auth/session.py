@@ -93,7 +93,7 @@ class HmrcSession(OAuth2Session):
                 os.environ[OAUTHLIB_INSECURE_TRANSPORT] = '1'
 
             # Fetch token
-            token = super().fetch_token(url, **kwargs)
+            token = super().fetch_token(url, include_client_id=True, **kwargs)
 
         finally:
 
