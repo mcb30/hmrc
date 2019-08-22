@@ -36,10 +36,11 @@ class HmrcSession(OAuth2Session):
             })
 
         # Use token storage if provided
-        if storage is not None:
+        self.storage = storage
+        if self.storage is not None:
             if token is None:
-                token = storage.token
-            kwargs.setdefault('token_updater', storage.save)
+                token = self.storage.token
+            kwargs.setdefault('token_updater', self.storage.save)
 
         super().__init__(client_id, scope=[], token=token, **kwargs)
 
@@ -63,7 +64,19 @@ class HmrcSession(OAuth2Session):
     def fetch_token(self, url=None, **kwargs):
         """Fetch an access token"""
         # pylint: disable=arguments-differ
+
+        # Use default token URI if none provided
         if url is None:
             url = urljoin(self.uri, self.TOKEN_URI)
+
+        # Use stored client secret if available
         kwargs.setdefault('client_secret', self.client_secret)
-        return super().fetch_token(url, **kwargs)
+
+        # Fetch token
+        token = super().fetch_token(url, **kwargs)
+
+        # Store token if storage is available
+        if self.storage:
+            self.storage.save(token)
+
+        return token
