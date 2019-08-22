@@ -22,6 +22,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'iso8601',
+        'lxml',
         'requests',
         'requests_oauthlib',
         'simplejson',
