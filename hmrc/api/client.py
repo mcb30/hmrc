@@ -1,9 +1,8 @@
 """HMRC client"""
 
-from abc import ABC, abstractmethod
 from dataclasses import dataclass, fields
 import functools
-from typing import List
+from typing import ClassVar, List
 from urllib.parse import urljoin
 from requests import HTTPError
 from uritemplate import URITemplate
@@ -67,11 +66,14 @@ class HmrcClientError(IOError):
 
 
 @dataclass
-class HmrcClient(ABC):
+class HmrcClient:
     """HMRC API client"""
 
     session: HmrcSession
     """Requests session"""
+
+    scope: ClassVar[List[str]] = []
+    """Authorisation scopes"""
 
     REQUEST_CONTENT_TYPE = 'application/json'
     RESPONSE_CONTENT_TYPE = 'application/vnd.hmrc.1.0+json'
@@ -110,12 +112,6 @@ class HmrcClient(ABC):
             raise HmrcClientError(error) from exc
 
         return rsp.text
-
-    @property
-    @abstractmethod
-    def scope(self):
-        """Authorisation scopes"""
-        pass
 
 
 @dataclass

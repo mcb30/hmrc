@@ -64,7 +64,7 @@ from dataclasses import dataclass, fields
 from datetime import date, datetime
 from enum import Enum
 import re
-from typing import Callable
+from typing import Callable, ClassVar, Mapping, Set
 import iso8601
 import simplejson
 
@@ -172,15 +172,15 @@ class HmrcTypeMap:
 class HmrcDataClass:
     """HMRC data class"""
 
-    FieldMap = HmrcFieldMap
+    FieldMap: ClassVar[type] = HmrcFieldMap
     """Field mapping class"""
 
-    TypeMap = HmrcTypeMap
+    TypeMap: ClassVar[type] = HmrcTypeMap
     """Type mapping class"""
 
-    __mapping_by_name = {}
-    __mapping_by_hmrc_name = {}
-    __known_hmrc_names = set()
+    __mapping_by_name: ClassVar[Mapping] = {}
+    __mapping_by_hmrc_name: ClassVar[Mapping] = {}
+    __known_hmrc_names: ClassVar[Set] = set()
 
     @classmethod
     def build_hmrc_mappings(cls):

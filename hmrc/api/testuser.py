@@ -93,8 +93,6 @@ class TestUserClient(HmrcClient):
 
     test: bool = True
 
-    scope = []
-
     create_individual = HmrcEndpoint('/create-test-user/individuals',
                                      request=TestUserServices,
                                      response=TestUser)
