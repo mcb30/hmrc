@@ -5,7 +5,7 @@ import os
 import unittest
 from hmrc.api import HmrcClient
 from hmrc.api.testuser import TestUserService, TestUserServices, TestUserClient
-from hmrc.auth import HmrcSession, TestUserSession
+from hmrc.auth import HmrcSession, TestUserSession, HmrcTokenStorage
 
 __all__ = [
     'TestCase',
@@ -24,6 +24,7 @@ class TestCase(unittest.TestCase):
     SERVER_TOKEN = 'HMRC_SERVER_TOKEN'
 
     Client = HmrcClient
+    Storage = HmrcTokenStorage
 
     @classmethod
     def setUpClass(cls):
@@ -38,13 +39,13 @@ class TestCase(unittest.TestCase):
         cls.anonymous = cls.Client(HmrcSession(test=True))
         cls.application = cls.Client(HmrcSession(
             cls.client_id, client_secret=cls.client_secret,
-            token=cls.server_token, test=True,
+            token=cls.server_token, storage=cls.Storage(), test=True,
         ))
 
         # Construct test user creation client
         cls.testuser = TestUserClient(HmrcSession(
             cls.client_id, client_secret=cls.client_secret,
-            token=cls.server_token, test=True,
+            token=cls.server_token, storage=cls.Storage(), test=True,
         ))
         cls.individual = {}
         cls.organisation = {}
@@ -75,6 +76,7 @@ class TestCase(unittest.TestCase):
         user = create(TestUserServices(service_names=service_names))
         client = self.Client(TestUserSession(
             self.client_id, client_secret=self.client_secret, user=user,
+            storage=self.Storage(),
         ))
         client.session.fetch_token()
         return client
