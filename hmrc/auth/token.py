@@ -31,9 +31,10 @@ class HmrcTokenStorage:
         """Load token from storage"""
         return self.token
 
-    def save(self, token):
+    def save(self, token=None):
         """Save token to storage"""
-        self.token = token
+        if token is not None:
+            self.token = token
 
     def close(self):
         """Close storage medium"""
@@ -70,7 +71,7 @@ class HmrcTokenFileStorage(HmrcTokenStorage):
         self.token = json.loads(data) if data else {}
         return super().load()
 
-    def save(self, token):
+    def save(self, token=None):
         """Save token to JSON file"""
         super().save(token)
         data = json.dumps(self.token)
