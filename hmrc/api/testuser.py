@@ -91,8 +91,6 @@ class TestUser(HmrcDataClass):
 class TestUserClient(HmrcClient):
     """Create Test User API client"""
 
-    test: bool = True
-
     create_individual = HmrcEndpoint('/create-test-user/individuals',
                                      request=TestUserServices,
                                      response=TestUser)
