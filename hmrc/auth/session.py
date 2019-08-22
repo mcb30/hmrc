@@ -43,6 +43,10 @@ class HmrcSession(OAuth2Session):
                 'client_secret': client_secret,
             })
 
+        # Allow server token to be passed as a plain string
+        if isinstance(token, str):
+            token = {'access_token': token, 'token_type': 'bearer'}
+
         # Use token storage if provided
         self.storage = storage
         if self.storage is not None:
