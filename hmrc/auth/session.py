@@ -1,11 +1,15 @@
 """HMRC API session with authorization support"""
 
+import os
 from urllib.parse import urljoin
 from requests_oauthlib import OAuth2Session
 
 __all__ = [
     'HmrcSession',
 ]
+
+OAUTHLIB_INSECURE_TRANSPORT = 'OAUTHLIB_INSECURE_TRANSPORT'
+"""Environment variable required for out-of-band authorization"""
 
 
 class HmrcSession(OAuth2Session):
@@ -16,6 +20,7 @@ class HmrcSession(OAuth2Session):
 
     AUTH_URI = '/oauth/authorize'
     TOKEN_URI = '/oauth/token'
+    OOB_REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
 
     def __init__(self, client_id=None, *, client_secret=None, test=False,
                  uri=None, token=None, storage=None, **kwargs):
@@ -24,6 +29,9 @@ class HmrcSession(OAuth2Session):
         self.test = test
         if uri is None:
             self.uri = self.BASE_TEST_URI if self.test else self.BASE_URI
+
+        # Set default out-of-band redirect URI
+        kwargs.setdefault('redirect_uri', self.OOB_REDIRECT_URI)
 
         # Configure automatic token refresh if client secret is provided
         self.client_secret = client_secret
@@ -72,8 +80,24 @@ class HmrcSession(OAuth2Session):
         # Use stored client secret if available
         kwargs.setdefault('client_secret', self.client_secret)
 
-        # Fetch token
-        token = super().fetch_token(url, **kwargs)
+        # Fetch token, allowing for use of out-of-band redirect URI
+        try:
+
+            # Allow use of out-of-band redirect URI if applicable
+            saved = os.environ.get(OAUTHLIB_INSECURE_TRANSPORT)
+            if self.redirect_uri == self.OOB_REDIRECT_URI:
+                os.environ[OAUTHLIB_INSECURE_TRANSPORT] = '1'
+
+            # Fetch token
+            token = super().fetch_token(url, **kwargs)
+
+        finally:
+
+            # Restore environment
+            if saved is None:
+                del os.environ[OAUTHLIB_INSECURE_TRANSPORT]
+            else:
+                os.environ[OAUTHLIB_INSECURE_TRANSPORT] = saved
 
         # Store token if storage is available
         if self.storage:
