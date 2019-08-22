@@ -50,29 +50,29 @@ class TestUserSession(HmrcSession):
         """Obtain authorization code using test user ID and password"""
 
         # Construct temporary session
-        session = Session()
+        with Session() as session:
 
-        # Get starting page
-        uri, _state = self.authorization_url()
-        uri, page = self.fetch_auth_page(session, uri)
+            # Get starting page
+            uri, _state = self.authorization_url()
+            uri, page = self.fetch_auth_page(session, uri)
 
-        # Click on the initial "Continue" button
-        href = page.find('.//a[@class="button"]').get('href')
-        uri, page = self.fetch_auth_page(session, urljoin(uri, href))
+            # Click on the initial "Continue" button
+            href = page.find('.//a[@class="button"]').get('href')
+            uri, page = self.fetch_auth_page(session, urljoin(uri, href))
 
-        # Submit sign in form
-        form = page.find('.//form')
-        form.find('.//input[@id="userId"]').set('value', user_id)
-        form.find('.//input[@id="password"]').set('value', password)
-        uri, page = self.fetch_auth_page_form(session, uri, form)
+            # Submit sign in form
+            form = page.find('.//form')
+            form.find('.//input[@id="userId"]').set('value', user_id)
+            form.find('.//input[@id="password"]').set('value', password)
+            uri, page = self.fetch_auth_page_form(session, uri, form)
 
-        # Submit authorisation form
-        form = page.find('.//form')
-        uri, page = self.fetch_auth_page_form(session, uri, form)
+            # Submit authorisation form
+            form = page.find('.//form')
+            uri, page = self.fetch_auth_page_form(session, uri, form)
 
-        # Extract code from page title
-        title = page.find('head//title').text
-        m = re.match(r'Success.+code=(?P<code>[0-9a-f]+)', title, re.I)
-        if not m:
-            raise IOError("Could not identify code from '%s'" % title)
-        return m.group('code')
+            # Extract code from page title
+            title = page.find('head//title').text
+            m = re.match(r'Success.+code=(?P<code>[0-9a-f]+)', title, re.I)
+            if not m:
+                raise IOError("Could not identify code from '%s'" % title)
+            return m.group('code')
