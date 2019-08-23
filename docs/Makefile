@@ -11,7 +11,7 @@ modules :
 	@$(RM) -r modules
 	@$(SPHINXAPIDOC) -T -o modules ../hmrc
 
-% : Makefile
+% : Makefile modules
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 .PHONY : help modules Makefile
