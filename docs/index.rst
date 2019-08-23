@@ -5,9 +5,7 @@ HMRC API client library
    :maxdepth: 2
    :caption: Contents:
 
-.. automodule:: hmrc.api.data
-   :members:
-
+   modules/hmrc
 
 Indices and tables
 ==================

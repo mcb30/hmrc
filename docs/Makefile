@@ -1,12 +1,17 @@
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
+SPHINXAPIDOC  = sphinx-apidoc
 SOURCEDIR     = .
 BUILDDIR      = _build
 
 help :
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
+modules :
+	@$(RM) -r modules
+	@$(SPHINXAPIDOC) -T -o modules ../hmrc
+
 % : Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-.PHONY : help Makefile
+.PHONY : help modules Makefile
