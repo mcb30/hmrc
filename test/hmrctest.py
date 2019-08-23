@@ -5,7 +5,7 @@ import os
 import unittest
 from hmrc.api import HmrcClient
 from hmrc.api.testuser import TestUserService, TestUserServices, TestUserClient
-from hmrc.auth import HmrcSession, TestUserSession, HmrcTokenStorage
+from hmrc.auth import HmrcSession, HmrcTokenStorage, TestUserAuth
 
 __all__ = [
     'TestCase',
@@ -74,11 +74,12 @@ class TestCase(unittest.TestCase):
         """Create authorized client for a new test user"""
         service_names = [TestUserService(x) for x in services]
         user = create(TestUserServices(service_names=service_names))
-        client = self.Client(TestUserSession(
-            self.client_id, client_secret=self.client_secret, user=user,
-            storage=self.Storage(),
-        ))
-        client.session.fetch_token()
+        test_auth = TestUserAuth(user_id=user.user_id, password=user.password)
+        session = HmrcSession(self.client_id, client_secret=self.client_secret,
+                              storage=self.Storage(), test=True,
+                              auto_auth=test_auth)
+        client = self.Client(session)
+        session.authorize()
         return client
 
     def createIndividual(self, *services):

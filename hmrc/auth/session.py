@@ -23,7 +23,8 @@ class HmrcSession(OAuth2Session):
     OOB_REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
 
     def __init__(self, client_id=None, *, client_secret=None, test=False,
-                 uri=None, token=None, storage=None, **kwargs):
+                 uri=None, token=None, storage=None, auto_auth=None,
+                 **kwargs):
 
         # Construct base URI
         self.test = test
@@ -53,6 +54,9 @@ class HmrcSession(OAuth2Session):
             if token is None:
                 token = self.storage.token
             kwargs.setdefault('token_updater', self.storage.save)
+
+        # Record automatic authorization mechanism if provided
+        self.auto_auth = auto_auth
 
         super().__init__(client_id, scope=[], token=token, **kwargs)
 
@@ -108,3 +112,10 @@ class HmrcSession(OAuth2Session):
             self.storage.save(token)
 
         return token
+
+    def authorize(self):
+        """Obtain an authorization code and fetch an access token"""
+        if self.auto_auth is None:
+            raise ValueError("No auto_auth mechanism provided")
+        code = self.auto_auth(*self.authorization_url())
+        self.fetch_token(code=code)

@@ -1,34 +1,26 @@
-"""Test user authentication"""
+"""Test user automatic authorization"""
 
+from dataclasses import dataclass
 import re
 from urllib.parse import urljoin
 from requests import Session
 from lxml import html
-from .session import HmrcSession
 
 __all__ = [
-    'TestUserSession',
+    'TestUserAuth',
 ]
 
 
-class TestUserSession(HmrcSession):
-    """HMRC API session with test user credentials"""
+@dataclass
+class TestUserAuth:
+    """Test user automatic authorization
 
-    def __init__(self, client_id=None, *, user=None, **kwargs):
-        super().__init__(client_id, test=True, **kwargs)
-        self.user = user
+    The authorization code will be obtained automatically using the
+    test user's credentials.
+    """
 
-    def fetch_token(self, url=None, *, code=None, **kwargs):
-        """Fetch an access token
-
-        The authorization code will be obtained automatically using
-        the test user's credentials.
-        """
-        # pylint: disable=arguments-differ
-        if code is None:
-            code = self.authorize_test_user(self.user.user_id,
-                                            self.user.password)
-        return super().fetch_token(url, code=code, **kwargs)
+    user_id: str
+    password: str
 
     @staticmethod
     def fetch_auth_page(session, uri, *args, method='GET', **kwargs):
@@ -46,14 +38,13 @@ class TestUserSession(HmrcSession):
         return self.fetch_auth_page(session, uri, *args, method=method,
                                     data=data, **kwargs)
 
-    def authorize_test_user(self, user_id, password):
+    def authorize(self, uri, _state):
         """Obtain authorization code using test user ID and password"""
 
         # Construct temporary session
         with Session() as session:
 
             # Get starting page
-            uri, _state = self.authorization_url()
             uri, page = self.fetch_auth_page(session, uri)
 
             # Click on the initial "Continue" button
@@ -62,8 +53,8 @@ class TestUserSession(HmrcSession):
 
             # Submit sign in form
             form = page.find('.//form')
-            form.find('.//input[@id="userId"]').set('value', user_id)
-            form.find('.//input[@id="password"]').set('value', password)
+            form.find('.//input[@id="userId"]').set('value', self.user_id)
+            form.find('.//input[@id="password"]').set('value', self.password)
             uri, page = self.fetch_auth_page_form(session, uri, form)
 
             # Submit authorisation form
@@ -76,3 +67,5 @@ class TestUserSession(HmrcSession):
             if not m:
                 raise IOError("Could not identify code from '%s'" % title)
             return m.group('code')
+
+    __call__ = authorize
