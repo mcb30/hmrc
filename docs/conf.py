@@ -23,4 +23,12 @@ source_suffix = '.rst'
 master_doc = 'index'
 exclude_patterns = ['_build']
 pygments_style = None
+
 html_theme = 'alabaster'
+html_theme_options = {
+    'description': config['metadata']['description'],
+    'github_user': 'mcb30',
+    'github_repo': 'hmrc',
+    'github_button': True,
+    'travis_button': True,
+}
