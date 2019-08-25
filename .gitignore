@@ -3,5 +3,6 @@ build/
 dist/
 .mypy_cache/
 .coverage
+.pylint-check.py
 *.pyc
 *.egg-info
