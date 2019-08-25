@@ -56,9 +56,9 @@ class TestCase(unittest.TestCase):
         cls.anonymous.session.close()
         cls.application.session.close()
         cls.testuser.session.close()
-        for client in cls.individual.values():
+        for client, _user in cls.individual.values():
             client.session.close()
-        for client in cls.organisation.values():
+        for client, _user in cls.organisation.values():
             client.session.close()
 
     def skipIfNoCredentials(self):
@@ -80,7 +80,7 @@ class TestCase(unittest.TestCase):
                               auto_auth=test_auth)
         client = self.Client(session)
         session.authorize()
-        return client
+        return client, user
 
     def createIndividual(self, *services):
         """Create authorized client for a new individual test user"""
@@ -95,7 +95,8 @@ def anonymous(func):
     """Decorator for a test case using no authorization"""
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
-        return func(self, self.anonymous, *args, **kwargs)
+        client = self.anonymous
+        return func(self, client, *args, **kwargs)
     return wrapper
 
 
@@ -104,7 +105,8 @@ def application(func):
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
         self.skipIfNoCredentials()
-        return func(self, self.application, *args, **kwargs)
+        client = self.application
+        return func(self, client, *args, **kwargs)
     return wrapper
 
 
@@ -122,7 +124,8 @@ def individual(*services, key=None):
             self.skipIfNoCredentials()
             if key not in self.individual:
                 self.individual[key] = self.createIndividual(*services)
-            return func(self, self.individual[key], *args, **kwargs)
+            client, user = self.individual[key]
+            return func(self, client, user, *args, **kwargs)
         return wrapper
 
     return decorate
@@ -142,7 +145,8 @@ def organisation(*services, key=None):
             self.skipIfNoCredentials()
             if key not in self.organisation:
                 self.organisation[key] = self.createOrganisation(*services)
-            return func(self, self.organisation[key], *args, **kwargs)
+            client, user = self.organisation[key]
+            return func(self, client, user, *args, **kwargs)
         return wrapper
 
     return decorate

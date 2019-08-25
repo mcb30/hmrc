@@ -10,7 +10,7 @@ class TokenRefreshTest(TestCase):
     Client = HelloClient
 
     @individual()
-    def test_refresh(self, client):
+    def test_refresh(self, client, _user):
         """Test ability to refresh an expired token"""
 
         # Get existing token

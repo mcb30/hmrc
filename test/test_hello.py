@@ -31,7 +31,7 @@ class HelloTest(TestCase):
             client.user()
 
     @individual()
-    def test_individual(self, client):
+    def test_individual(self, client, _user):
         """Test user-restricted endpoint with individual test user"""
         msg = client.world()
         self.assertEqual(msg.message, "Hello World")
@@ -41,7 +41,7 @@ class HelloTest(TestCase):
         self.assertEqual(msg.message, "Hello User")
 
     @organisation()
-    def test_organisation(self, client):
+    def test_organisation(self, client, _user):
         """Test user-restricted endpoint with organisation test user"""
         msg = client.world()
         self.assertEqual(msg.message, "Hello World")
