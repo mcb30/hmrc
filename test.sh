@@ -29,3 +29,7 @@ fi
 # Run mypy
 #
 mypy hmrc
+
+# Run pycodestyle
+#
+python3 -m pycodestyle hmrc
