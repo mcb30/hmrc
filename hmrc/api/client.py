@@ -105,7 +105,7 @@ class HmrcClient:
             # Try to parse error response body
             try:
                 error = HmrcErrorResponse.from_json(rsp.text)
-            except:
+            except Exception:
                 raise exc from None
 
             # Raise chained exception
