@@ -6,9 +6,7 @@ install:
   - pip install -e .
   - pip install coverage
   - pip install coveralls
-script:
-  - coverage run --branch --source hmrc setup.py test
-  - coverage report --show-missing
+script: ./test.sh
 after_success:
   - coveralls
 deploy:
