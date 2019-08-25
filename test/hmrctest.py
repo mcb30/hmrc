@@ -98,6 +98,7 @@ def anonymous(func):
         return func(self, self.anonymous, *args, **kwargs)
     return wrapper
 
+
 def application(func):
     """Decorator for a test case using application authorization"""
     @functools.wraps(func)
@@ -106,10 +107,15 @@ def application(func):
         return func(self, self.application, *args, **kwargs)
     return wrapper
 
+
 def individual(*services, key=None):
     """Decorator for a test case using an individual test user"""
+
+    # Default to caching user by list of services
     if key is None:
         key = frozenset(services)
+
+    # Construct decorator
     def decorate(func):
         @functools.wraps(func)
         def wrapper(self, *args, **kwargs):
@@ -118,12 +124,18 @@ def individual(*services, key=None):
                 self.individual[key] = self.createIndividual(*services)
             return func(self, self.individual[key], *args, **kwargs)
         return wrapper
+
     return decorate
+
 
 def organisation(*services, key=None):
     """Decorator for a test case using an organisation test user"""
+
+    # Default to caching user by list of services
     if key is None:
         key = frozenset(services)
+
+    # Construct decorator
     def decorate(func):
         @functools.wraps(func)
         def wrapper(self, *args, **kwargs):
@@ -132,4 +144,5 @@ def organisation(*services, key=None):
                 self.organisation[key] = self.createOrganisation(*services)
             return func(self, self.organisation[key], *args, **kwargs)
         return wrapper
+
     return decorate
