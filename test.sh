@@ -21,15 +21,15 @@ from typing import Type
 check = Type
 EOF
 if pylint .pylint-check.py >/dev/null 2>/dev/null ; then
-    pylint hmrc
+    pylint hmrc test
 else
     echo Skipping pylint check
 fi
 
 # Run mypy
 #
-mypy hmrc
+mypy hmrc test
 
 # Run pycodestyle
 #
-python3 -m pycodestyle hmrc
+python3 -m pycodestyle hmrc test
