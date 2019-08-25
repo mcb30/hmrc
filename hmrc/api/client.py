@@ -81,7 +81,8 @@ class HmrcClient:
     def __post_init__(self):
         self.session.extend_scope(self.scope)
 
-    def request(self, uri, *, method='GET', query=None, body=None):
+    def request(self, uri, *, method='GET', query=None, body=None,
+                scenario=None):
         """Send request"""
 
         # Create required headers
@@ -89,6 +90,10 @@ class HmrcClient:
             'Content-Type': self.REQUEST_CONTENT_TYPE,
             'Accept': self.RESPONSE_CONTENT_TYPE,
         }
+
+        # Add test scenario header, if applicable
+        if scenario is not None:
+            headers['Gov-Test-Scenario'] = scenario
 
         # Construct request
         rsp = self.session.request(method, urljoin(self.session.uri, uri),
@@ -151,7 +156,7 @@ class HmrcEndpoint:
             return self
         return partial(self.__call__, instance)
 
-    def __call__(self, client, *args, **kwargs):
+    def __call__(self, client, *args, scenario=None, **kwargs):
         """Call endpoint"""
 
         # Extract any path parameter arguments and construct URI
@@ -173,7 +178,8 @@ class HmrcEndpoint:
             req = None
 
         # Issue request
-        rsp = client.request(uri, method=self.method, query=query, body=req)
+        rsp = client.request(uri, method=self.method, query=query, body=req,
+                             scenario=scenario)
 
         # Construct response
         return self.response.from_json(rsp)
