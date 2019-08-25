@@ -25,3 +25,7 @@ if pylint .pylint-check.py >/dev/null 2>/dev/null ; then
 else
     echo Skipping pylint check
 fi
+
+# Run mypy
+#
+mypy hmrc
