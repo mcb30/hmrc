@@ -1,26 +1,43 @@
 """Test user automatic authorization"""
 
-from dataclasses import dataclass
 import re
 from urllib.parse import urljoin
+from oauthlib.oauth2 import WebApplicationClient
 from requests import Session
 from lxml import html
 
 __all__ = [
-    'TestUserAuth',
+    'TestUserAuthClient',
 ]
 
+DUMMY_AUTH_CODE = True
+"""Dummy authorization code
 
-@dataclass
-class TestUserAuth:
-    """Test user automatic authorization
+This is required to convince requests_oauthlib that an authorization
+code is available, despite not being passed as a parameter to
+:meth:`fetch_token`.
+"""
 
-    The authorization code will be obtained automatically using the
-    test user's credentials.
+
+class TestUserAuthClient(WebApplicationClient):
+    """Test user OAuth2 authorization client
+
+    This may be used as a drop-in replacement for
+    :class:`oauthlib.oauth2.LegacyApplicationClient`.  It provides an
+    OAuth2 client capable of obtaining an access token using a test
+    user's username and password.
+
+    Note that the HMRC API sandbox does not actually support the
+    RFC6749 Resource Owner Password Credentials grant type.  Instead,
+    this OAuth2 client steps through the HMRC API sandbox login pages,
+    filling in the HTML forms as required.
+
+    This OAuth2 client is usable only for test user accounts created
+    using :mod:`hmrc.api.testuser`.
     """
 
-    user_id: str
-    password: str
+    def __init__(self, client_id, code=DUMMY_AUTH_CODE, **kwargs):
+        super().__init__(client_id, code=code, **kwargs)
 
     @staticmethod
     def fetch_auth_page(session, uri, *args, method='GET', **kwargs):
@@ -38,7 +55,7 @@ class TestUserAuth:
         return self.fetch_auth_page(session, uri, *args, method=method,
                                     data=data, **kwargs)
 
-    def authorize(self, uri, _state):
+    def authorize(self, uri, username, password):
         """Obtain authorization code using test user ID and password"""
 
         # Construct temporary session
@@ -53,8 +70,8 @@ class TestUserAuth:
 
             # Submit sign in form
             form = page.find('.//form')
-            form.find('.//input[@id="userId"]').set('value', self.user_id)
-            form.find('.//input[@id="password"]').set('value', self.password)
+            form.find('.//input[@id="userId"]').set('value', username)
+            form.find('.//input[@id="password"]').set('value', password)
             uri, page = self.fetch_auth_page_form(session, uri, form)
 
             # Submit authorisation form
@@ -68,4 +85,10 @@ class TestUserAuth:
                 raise IOError("Could not identify code from '%s'" % title)
             return m.group('code')
 
-    __call__ = authorize
+    def prepare_request_body(self, auth_uri, username, password, code=None,
+                             **kwargs):
+        """Prepare access token request body"""
+        # pylint: disable=arguments-differ
+        if code == DUMMY_AUTH_CODE or not code:
+            code = self.authorize(auth_uri, username, password)
+        return super().prepare_request_body(code=code, **kwargs)

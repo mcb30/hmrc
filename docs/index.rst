@@ -46,14 +46,16 @@ Pythonic way.  For example:
 .. code-block:: python
 
    >>> from datetime import date
-   >>> from hmrc.auth import HmrcSession, browser_auth
+   >>> import webbrowser
+   >>> from hmrc.auth import HmrcSession
    >>> from hmrc.api.vat import VatClient, VatObligationStatus
 
-   >>> session = HmrcSession(client_id, client_secret=client_secret,
-   ...                       auto_auth=browser_auth)
+   >>> session = HmrcSession(client_id, client_secret=client_secret)
    >>> vat = VatClient(session, vrn='195036945')
-   >>> session.authorize()
-   Please enter the code obtained via the browser:
+
+   >>> webbrowser.open(session.authorization_url()[0])
+   >>> session.fetch_token(code=input("Enter OAuth2 authorization code:"))
+   Enter OAuth2 authorization code:
    c333790c9c4f4a8a97501f339a6f4954
 
    >>> start = date(2018, 1, 1)

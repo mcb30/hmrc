@@ -4,14 +4,6 @@ hmrc.auth package
 Submodules
 ----------
 
-hmrc.auth.browser module
-------------------------
-
-.. automodule:: hmrc.auth.browser
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 hmrc.auth.session module
 ------------------------
 
