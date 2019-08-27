@@ -88,6 +88,9 @@ class HmrcSession(OAuth2Session):
         # Use stored client secret if available
         kwargs.setdefault('client_secret', self.client_secret)
 
+        # Force client_id to be included in request body
+        kwargs.setdefault('include_client_id', True)
+
         # Fetch token, allowing for use of out-of-band redirect URI
         try:
 
@@ -97,7 +100,7 @@ class HmrcSession(OAuth2Session):
                 os.environ[OAUTHLIB_INSECURE_TRANSPORT] = '1'
 
             # Fetch token
-            token = super().fetch_token(url, include_client_id=True, **kwargs)
+            token = super().fetch_token(url, **kwargs)
 
         finally:
 
