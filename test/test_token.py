@@ -1,6 +1,5 @@
 """Token storage tests"""
 
-import os
 from tempfile import TemporaryFile, NamedTemporaryFile
 import unittest
 from hmrc.auth.token import HmrcTokenStorage, HmrcTokenFileStorage
@@ -76,16 +75,14 @@ class TokenNamedFileStorageTest(TokenStorageTest):
 
     @classmethod
     def setUpClass(cls):
-        file = NamedTemporaryFile(mode='w+t', delete=False)
-        file.close()
-        cls.path = file.name
+        cls.file = NamedTemporaryFile(mode='w+t')
 
     @classmethod
     def tearDownClass(cls):
-        os.unlink(cls.path)
+        cls.file.close()
 
     def storage(self, *args, **kwargs):
-        return super().storage(*args, path=self.path, **kwargs)
+        return super().storage(*args, path=self.file.name, **kwargs)
 
     def test_reload_from_file(self):
         """Test ability to reload after closing and reopening the file"""
