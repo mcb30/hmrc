@@ -1,11 +1,16 @@
 """Test utilities"""
 
+from configparser import ConfigParser
 import functools
 import os
+import shlex
+from tempfile import NamedTemporaryFile
 import unittest
 from hmrc.api import HmrcClient
 from hmrc.api.testuser import TestUserService, TestUserServices, TestUserClient
-from hmrc.auth import HmrcSession, HmrcTokenStorage, TestUserAuthClient
+from hmrc.auth import (HmrcSession, HmrcTokenStorage, HmrcTokenFileStorage,
+                       TestUserAuthClient)
+from hmrc.cli import Command
 
 __all__ = [
     'TestCase',
@@ -50,6 +55,18 @@ class TestCase(unittest.TestCase):
         cls.individual = {}
         cls.organisation = {}
 
+        # Construct configuration file
+        cls.config = NamedTemporaryFile(mode='w+t')
+        parser = ConfigParser()
+        parser['DEFAULT'] = {
+            'client_id': cls.client_id,
+            'client_secret': cls.client_secret,
+            'server_token': cls.server_token,
+            'test': True,
+        }
+        parser.write(cls.config)
+        cls.config.flush()
+
     @classmethod
     def tearDownClass(cls):
         """Finalise test suite"""
@@ -60,6 +77,7 @@ class TestCase(unittest.TestCase):
             client.session.close()
         for client, _user in cls.organisation.values():
             client.session.close()
+        cls.config.close()
 
     def skipIfNoCredentials(self):
         """Skip test unless application credentials are available"""
@@ -89,6 +107,18 @@ class TestCase(unittest.TestCase):
     def createOrganisation(self, *services):
         """Create authorized client for a new organisation test user"""
         return self.createUser(self.testuser.create_organisation, *services)
+
+    def command(self, client, command):
+        """Invoke command"""
+        args = shlex.split(command)
+        with NamedTemporaryFile(mode='w+t') as token:
+            with HmrcTokenFileStorage(file=token) as storage:
+                if client.session.storage is not None:
+                    storage.save(client.session.storage.token)
+                args.extend(['--config', self.config.name,
+                             '--token', token.name])
+                command = Command(args)
+                return command()
 
 
 def anonymous(func):
