@@ -39,6 +39,12 @@ class HmrcTokenStorage:
     def close(self):
         """Close storage medium"""
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.close()
+
 
 @dataclass
 class HmrcTokenFileStorage(HmrcTokenStorage):
