@@ -47,6 +47,7 @@ class TokenStorageTest(unittest.TestCase):
         self.assertEqual(storage.token, {})
         storage.load()
         self.assertEqual(storage.token, {})
+        storage.close()
 
     def test_context_manager(self):
         """Test ability to use token storage as context manager"""
