@@ -44,14 +44,10 @@ class TokenStorageTest(unittest.TestCase):
             self.assertEqual(loaded['access_token'], '69')
 
 
-class TokenFileStorageTest(TokenStorageTest):
-    """Token file storage tests"""
+class TokenUnnamedFileStorageTest(TokenStorageTest):
+    """Token unnamed file storage tests"""
 
     Storage = HmrcTokenFileStorage
-
-
-class TokenExplicitFileStorageTest(TokenFileStorageTest):
-    """Token file storage tests"""
 
     def setUp(self):
         self.file = TemporaryFile(mode='w+t')
@@ -60,8 +56,10 @@ class TokenExplicitFileStorageTest(TokenFileStorageTest):
         return super().storage(*args, file=self.file, **kwargs)
 
 
-class TokenNamedFileStorageTest(TokenFileStorageTest):
+class TokenNamedFileStorageTest(TokenStorageTest):
     """Token named file storage tests"""
+
+    Storage = HmrcTokenFileStorage
 
     @classmethod
     def setUpClass(cls):
