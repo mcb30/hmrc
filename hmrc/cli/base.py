@@ -181,7 +181,7 @@ class Command:
     @property
     def storage(self):
         """Token storage"""
-        return HmrcTokenFileStorage(self.args.token)
+        return HmrcTokenFileStorage(path=self.args.token)
 
 
 class LoginCommand(Command):
