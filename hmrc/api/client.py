@@ -160,8 +160,9 @@ class HmrcEndpoint:
         """Call endpoint"""
 
         # Extract any path parameter arguments and construct URI
-        path_kwargs = {k: kwargs.pop(k) if k in kwargs else getattr(client, k)
-                       for k in self.path_args}
+        path_kwargs = {k: kwargs.pop(k, None) for k in self.path_args}
+        path_kwargs = {k: v if v is not None else getattr(client, k)
+                       for k, v in path_kwargs.items()}
         path = self.path(**path_kwargs).to_hmrc()
         uri = self.template.expand(path)
 
