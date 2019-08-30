@@ -138,7 +138,7 @@ class Command:
         except NoOptionError as exc:
             raise SystemExit(
                 "Missing configuration file option '%s'" % exc.option
-            )
+            ) from exc
 
         # Construct client parameters
         params = {k: v for k, v in config[section].items() if k not in
@@ -212,8 +212,8 @@ class LoginCommand(Command):
             webbrowser.open(uri)
             try:
                 code = input("Enter authorization code from browser: ")
-            except KeyboardInterrupt:
-                raise SystemExit("Aborted")
+            except KeyboardInterrupt as exc:
+                raise SystemExit("Aborted") from exc
 
         # Obtain token
         session.fetch_token(code=code)
