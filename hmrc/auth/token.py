@@ -36,6 +36,10 @@ class HmrcTokenStorage:
         if token is not None:
             self.token = token
 
+    def delete(self):
+        """Delete token from storage"""
+        self.save({})
+
     def close(self):
         """Close storage medium"""
 
