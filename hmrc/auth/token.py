@@ -4,7 +4,6 @@ from dataclasses import dataclass, InitVar
 import json
 import os
 import stat
-from tempfile import TemporaryFile
 from typing import TextIO
 
 __all__ = [
@@ -56,11 +55,10 @@ class HmrcTokenFileStorage(HmrcTokenStorage):
         # Open/create file if no explicit file was provided
         if self.file is None:
             if path is None:
-                self.file = TemporaryFile(mode='w+t')
-            else:
-                fd = os.open(path, (os.O_RDWR | os.O_CREAT),
-                             (stat.S_IRUSR | stat.S_IWUSR))
-                self.file = open(fd, 'a+t')
+                path = os.path.expanduser('~/.hmrc.token')
+            fd = os.open(path, (os.O_RDWR | os.O_CREAT),
+                         (stat.S_IRUSR | stat.S_IWUSR))
+            self.file = open(fd, 'a+t')
 
         super().__post_init__()
 
