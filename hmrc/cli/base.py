@@ -151,10 +151,11 @@ class Command:
         # Execute command
         with self.storage as storage:
             token = None if 'access_token' in storage.token else server_token
-            session = HmrcSession(client_id, client_secret=client_secret,
-                                  storage=storage, token=token, test=test)
-            client = self.args.cls.Client(session, **params)
-            return self.args.cls.execute(client, self.args)
+            with HmrcSession(client_id, client_secret=client_secret,
+                             storage=storage, token=token,
+                             test=test) as session:
+                client = self.args.cls.Client(session, **params)
+                return self.args.cls.execute(client, self.args)
 
     @staticmethod
     def add_arguments(parser):
