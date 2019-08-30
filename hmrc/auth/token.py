@@ -1,6 +1,7 @@
 """HMRC API token storage"""
 
 from dataclasses import dataclass, InitVar
+import fcntl
 import json
 import os
 import stat
@@ -64,8 +65,12 @@ class HmrcTokenFileStorage(HmrcTokenStorage):
 
     def load(self):
         """Load token from JSON file"""
-        self.file.seek(0)
-        data = self.file.read()
+        try:
+            fcntl.lockf(self.file.fileno(), fcntl.LOCK_SH)
+            self.file.seek(0)
+            data = self.file.read()
+        finally:
+            fcntl.lockf(self.file.fileno(), fcntl.LOCK_UN)
         self.token = json.loads(data) if data else {}
         return super().load()
 
@@ -73,10 +78,14 @@ class HmrcTokenFileStorage(HmrcTokenStorage):
         """Save token to JSON file"""
         super().save(token)
         data = json.dumps(self.token)
-        self.file.seek(0)
-        self.file.truncate(0)
-        self.file.write(data)
-        self.file.flush()
+        try:
+            fcntl.lockf(self.file.fileno(), fcntl.LOCK_EX)
+            self.file.seek(0)
+            self.file.truncate(0)
+            self.file.write(data)
+            self.file.flush()
+        finally:
+            fcntl.lockf(self.file.fileno(), fcntl.LOCK_UN)
 
     def close(self):
         """Close file"""
