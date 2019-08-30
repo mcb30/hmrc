@@ -23,9 +23,15 @@ setup(
     install_requires=[
         'iso8601',
         'lxml',
+        'parsedatetime',
         'requests',
         'requests_oauthlib',
         'simplejson',
         'uritemplate',
     ],
+    entry_points={
+        'console_scripts': [
+            'hmrc=hmrc.cli.__main__:main',
+        ],
+    },
 )
