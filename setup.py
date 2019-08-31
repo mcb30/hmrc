@@ -24,6 +24,7 @@ setup(
         'iso8601',
         'lxml',
         'parsedatetime',
+        'python-dateutil',
         'requests',
         'requests_oauthlib',
         'simplejson',
