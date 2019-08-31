@@ -1,6 +1,10 @@
 """Command line entry point"""
 
-from . import Command
+from .base import Command
+
+__all__ = [
+    'main',
+]
 
 
 def main(args=None):

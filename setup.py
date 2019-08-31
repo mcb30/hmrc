@@ -32,7 +32,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'hmrc=hmrc.cli.__main__:main',
+            'hmrc=hmrc.cli:main',
         ],
     },
 )
