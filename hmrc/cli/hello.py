@@ -1,6 +1,6 @@
 """Hello World API command line interface"""
 
-from .base import Command, LoginCommand
+from . import Command, LoginCommand
 from ..api.hello import HelloClient
 
 __all__ = [
@@ -12,8 +12,10 @@ __all__ = [
 ]
 
 
-class HelloCommand(Command, section=True):
+class HelloCommand(Command):
     """Hello World commands"""
+
+    section = 'hello'
 
     Client = HelloClient
 
@@ -27,7 +29,7 @@ class HelloWorldCommand(HelloCommand):
     """Test endpoint with no authorization"""
 
     @staticmethod
-    def execute(client, args):
+    def execute(client):
         return client.world().message
 
 
@@ -35,7 +37,7 @@ class HelloApplicationCommand(HelloCommand):
     """Test endpoint with application authorization"""
 
     @staticmethod
-    def execute(client, args):
+    def execute(client):
         return client.application().message
 
 
@@ -43,5 +45,5 @@ class HelloUserCommand(HelloCommand):
     """Test endpoint with user authorization"""
 
     @staticmethod
-    def execute(client, args):
+    def execute(client):
         return client.user().message

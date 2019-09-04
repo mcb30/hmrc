@@ -4,7 +4,7 @@ from datetime import date
 from decimal import Decimal
 from enum import Enum
 from dateutil.relativedelta import relativedelta
-from .base import Command, LoginCommand, datestring
+from . import Command, LoginCommand, datestring
 from ..api.vat import VatClient, VatObligationStatus, VatSubmission
 
 __all__ = [
@@ -59,14 +59,16 @@ def format_vat_return(ret, draft=False):
     return output
 
 
-class VatCommand(Command, section=True):
+class VatCommand(Command):
     """VAT commands"""
+
+    section = 'vat'
 
     Client = VatClient
 
     @classmethod
-    def add_arguments(cls, parser):
-        super().add_arguments(parser)
+    def init_parser(cls, parser):
+        super().init_parser(parser)
         parser.add_argument('--vrn', help="VAT registration number")
 
 
@@ -78,8 +80,8 @@ class VatObligationsCommand(VatCommand):
     """Retrieve VAT obligations"""
 
     @classmethod
-    def add_arguments(cls, parser):
-        super().add_arguments(parser)
+    def init_parser(cls, parser):
+        super().init_parser(parser)
         parser.add_argument('--from', dest='from_', metavar='FROM',
                             type=datestring, help="Start date")
         parser.add_argument('--to', type=datestring, help="End date")
@@ -94,23 +96,22 @@ class VatObligationsCommand(VatCommand):
                            help="Find only fulfilled obligations")
         parser.set_defaults(status=VatObligationStatus.OPEN)
 
-    @staticmethod
-    def execute(client, args):
+    def execute(self, client):
 
         # Construct a date range acceptable to the API
-        if not args.to:
-            args.to = (
-                args.from_ + ONE_YEAR if args.from_ else
-                None if args.status == VatObligationStatus.OPEN else
+        if not self.args.to:
+            self.args.to = (
+                self.args.from_ + ONE_YEAR if self.args.from_ else
+                None if self.args.status == VatObligationStatus.OPEN else
                 date.today()
             )
-        if args.to and not args.from_:
-            args.from_ = args.to - ONE_YEAR
+        if self.args.to and not self.args.from_:
+            self.args.from_ = self.args.to - ONE_YEAR
 
         # Retrieve obligations
         obligations = client.obligations(
-            scenario=args.scenario, vrn=args.vrn, to=args.to,
-            from_=args.from_, status=args.status,
+            scenario=self.args.scenario, vrn=self.args.vrn, to=self.args.to,
+            from_=self.args.from_, status=self.args.status,
         )
 
         # Display obligations
@@ -124,8 +125,8 @@ class VatSubmitCommand(VatCommand):
     """Submit VAT return"""
 
     @classmethod
-    def add_arguments(cls, parser):
-        super().add_arguments(parser)
+    def init_parser(cls, parser):
+        super().init_parser(parser)
         parser.add_argument('key', help="Period key")
         parser.add_argument('--vat-sales', type=Decimal, default=ZERO,
                             help=VatBox.BOX1.value)
@@ -144,26 +145,26 @@ class VatSubmitCommand(VatCommand):
         parser.add_argument('--finalise', action='store_true',
                             help="Finalise return")
 
-    @staticmethod
-    def execute(client, args):
-        total_vat_due = args.vat_sales + args.vat_acquisitions
-        net_vat_due = abs(total_vat_due - args.vat_reclaimed)
+    def execute(self, client):
+        total_vat_due = self.args.vat_sales + self.args.vat_acquisitions
+        net_vat_due = abs(total_vat_due - self.args.vat_reclaimed)
         submission = VatSubmission(
-            period_key=args.key,
-            vat_due_sales=args.vat_sales,
-            vat_due_acquisitions=args.vat_acquisitions,
+            period_key=self.args.key,
+            vat_due_sales=self.args.vat_sales,
+            vat_due_acquisitions=self.args.vat_acquisitions,
             total_vat_due=total_vat_due,
-            vat_reclaimed_curr_period=args.vat_reclaimed,
+            vat_reclaimed_curr_period=self.args.vat_reclaimed,
             net_vat_due=net_vat_due,
-            total_value_sales_ex_vat=args.total_sales,
-            total_value_purchases_ex_vat=args.total_purchases,
-            total_value_goods_supplied_ex_vat=args.total_supplies,
-            total_acquisitions_ex_vat=args.total_acquisitions,
-            finalised=args.finalise,
+            total_value_sales_ex_vat=self.args.total_sales,
+            total_value_purchases_ex_vat=self.args.total_purchases,
+            total_value_goods_supplied_ex_vat=self.args.total_supplies,
+            total_acquisitions_ex_vat=self.args.total_acquisitions,
+            finalised=self.args.finalise,
         )
-        output = format_vat_return(submission, draft=not args.finalise)
-        if args.finalise:
-            client.submit(submission, scenario=args.scenario, vrn=args.vrn)
+        output = format_vat_return(submission, draft=not self.args.finalise)
+        if self.args.finalise:
+            client.submit(submission, scenario=self.args.scenario,
+                          vrn=self.args.vrn)
         return output
 
 
@@ -171,12 +172,11 @@ class VatReturnCommand(VatCommand):
     """Retrieve VAT return"""
 
     @classmethod
-    def add_arguments(cls, parser):
-        super().add_arguments(parser)
+    def init_parser(cls, parser):
+        super().init_parser(parser)
         parser.add_argument('key', help="Period key")
 
-    @staticmethod
-    def execute(client, args):
-        ret = client.retrieve(scenario=args.scenario, vrn=args.vrn,
-                              period_key=args.key)
+    def execute(self, client):
+        ret = client.retrieve(scenario=self.args.scenario, vrn=self.args.vrn,
+                              period_key=self.args.key)
         return format_vat_return(ret)

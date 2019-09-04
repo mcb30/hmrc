@@ -27,12 +27,26 @@ setup(
         'python-dateutil',
         'requests',
         'requests_oauthlib',
+        'setuptools',
         'simplejson',
         'uritemplate',
     ],
     entry_points={
         'console_scripts': [
-            'hmrc=hmrc.cli:main',
+            'hmrc=hmrc.cli.registry:main',
+        ],
+        'hmrc.cli.command': [
+            'login = hmrc.cli.base:LoginCommand',
+            'hello = hmrc.cli.hello:HelloCommand',
+            'hello application = hmrc.cli.hello:HelloApplicationCommand',
+            'hello login = hmrc.cli.hello:HelloLoginCommand',
+            'hello user = hmrc.cli.hello:HelloUserCommand',
+            'hello world = hmrc.cli.hello:HelloWorldCommand',
+            'vat = hmrc.cli.vat:VatCommand',
+            'vat login = hmrc.cli.vat:VatLoginCommand',
+            'vat obligations = hmrc.cli.vat:VatObligationsCommand',
+            'vat return = hmrc.cli.vat:VatReturnCommand',
+            'vat submit = hmrc.cli.vat:VatSubmitCommand',
         ],
     },
 )

@@ -10,7 +10,7 @@ from hmrc.api import HmrcClient
 from hmrc.api.testuser import TestUserService, TestUserServices, TestUserClient
 from hmrc.auth import (HmrcSession, HmrcTokenStorage, HmrcTokenFileStorage,
                        TestUserAuthClient)
-from hmrc.cli import Command
+from hmrc.cli.registry import commands
 
 __all__ = [
     'TestCase',
@@ -117,7 +117,7 @@ class TestCase(unittest.TestCase):
                     storage.save(client.session.storage.token)
                 args.extend(['--config', self.config.name,
                              '--token', token.name])
-                command = Command(args)
+                command = commands.command(args)
                 return command()
 
 
