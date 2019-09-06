@@ -122,3 +122,25 @@ class VatCommandTest(TestCase):
         self.assertIn('3711', output[6])
         check = self.command(client, "vat return --vrn %s 18AE" % user.vrn)
         self.assertEqual(check, output)
+
+    @organisation(TestUserService.MTD_VAT)
+    def test_csv(self, client, user):
+        """Test CSV submission"""
+        filename = self.files / 'vat_quarterly_obs.csv'
+        cmd = ("vat csv submit --vrn %s --scenario QUARTERLY_OBS_02_OPEN "
+               "--finalise %s" % (user.vrn, filename))
+        self.command(client, cmd)
+        retrieved = client.retrieve(vrn=user.vrn, period_key='18A2')
+        self.assertEqual(retrieved.net_vat_due, Decimal('3753.51'))
+        self.assertEqual(retrieved.total_value_sales_ex_vat, 41408)
+
+    @organisation(TestUserService.MTD_VAT)
+    def test_excel(self, client, user):
+        """Test Excel submission"""
+        filename = self.files / 'vat_quarterly_obs.xls'
+        cmd = ("vat excel submit --vrn %s --scenario QUARTERLY_OBS_03_OPEN "
+               "--finalise %s" % (user.vrn, filename))
+        self.command(client, cmd)
+        retrieved = client.retrieve(vrn=user.vrn, period_key='18A3')
+        self.assertEqual(retrieved.net_vat_due, Decimal('5814.61'))
+        self.assertEqual(retrieved.total_value_sales_ex_vat, 36314)

@@ -8,6 +8,8 @@ Subpackages
 
     hmrc.api
     hmrc.auth
+    hmrc.cli
+    hmrc.plugins
 
 Module contents
 ---------------

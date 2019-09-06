@@ -3,7 +3,9 @@
 from configparser import ConfigParser
 import functools
 import os
+from pathlib import Path
 import shlex
+import sys
 from tempfile import NamedTemporaryFile
 import unittest
 from hmrc.api import HmrcClient
@@ -66,6 +68,10 @@ class TestCase(unittest.TestCase):
         }
         parser.write(cls.config)
         cls.config.flush()
+
+        # Locate test files directory (if present)
+        module = sys.modules[cls.__module__]
+        cls.files = Path(module.__file__).parent / 'files'
 
     @classmethod
     def tearDownClass(cls):

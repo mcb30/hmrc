@@ -30,6 +30,7 @@ setup(
         'setuptools',
         'simplejson',
         'uritemplate',
+        'xlrd',
     ],
     entry_points={
         'console_scripts': [
@@ -47,6 +48,8 @@ setup(
             'vat obligations = hmrc.cli.vat:VatObligationsCommand',
             'vat return = hmrc.cli.vat:VatReturnCommand',
             'vat submit = hmrc.cli.vat:VatSubmitCommand',
+            'vat csv submit = hmrc.plugins.csv:CsvVatSubmitCommand',
+            'vat excel submit = hmrc.plugins.excel:ExcelVatSubmitCommand',
         ],
     },
 )
