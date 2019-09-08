@@ -54,7 +54,10 @@ class HmrcSession(OAuth2Session):
                 token = self.storage.token
             kwargs.setdefault('token_updater', self.storage.save)
 
-        super().__init__(client_id, scope=[], token=token, **kwargs)
+        # Use existing token's scope, if applicable
+        scope = [] if token is None else token.get('scope', [])
+
+        super().__init__(client_id, scope=scope, token=token, **kwargs)
 
     def __repr__(self):
         return '%s(%r, uri=%r, scope=%r)' % (
