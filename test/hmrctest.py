@@ -38,9 +38,9 @@ class TestCase(unittest.TestCase):
         """Initialise test suite"""
 
         # Retrieve session parameters from test environment
-        cls.client_id = os.environ.get(cls.CLIENT_ID)
-        cls.client_secret = os.environ.get(cls.CLIENT_SECRET)
-        cls.server_token = os.environ.get(cls.SERVER_TOKEN)
+        cls.client_id = os.environ.get(cls.CLIENT_ID, '')
+        cls.client_secret = os.environ.get(cls.CLIENT_SECRET, '')
+        cls.server_token = os.environ.get(cls.SERVER_TOKEN, '')
 
         # Construct anonymous and application-authorized clients
         cls.anonymous = cls.Client(HmrcSession(test=True))
