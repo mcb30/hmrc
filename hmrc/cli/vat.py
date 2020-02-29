@@ -17,7 +17,7 @@ __all__ = [
     'VatReturnCommand',
 ]
 
-ONE_YEAR = relativedelta(years=1)
+MAX_RANGE = relativedelta(years=1, days=-1)
 
 ZERO = Decimal('0.00')
 
@@ -101,12 +101,12 @@ class VatObligationsCommand(VatCommand):
         # Construct a date range acceptable to the API
         if not self.args.to:
             self.args.to = (
-                self.args.from_ + ONE_YEAR if self.args.from_ else
+                self.args.from_ + MAX_RANGE if self.args.from_ else
                 None if self.args.status == VatObligationStatus.OPEN else
                 date.today()
             )
         if self.args.to and not self.args.from_:
-            self.args.from_ = self.args.to - ONE_YEAR
+            self.args.from_ = self.args.to - MAX_RANGE
 
         # Retrieve obligations
         obligations = client.obligations(

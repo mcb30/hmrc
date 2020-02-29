@@ -90,6 +90,8 @@ class VatCommandTest(TestCase):
                               "--from 2018-04-01" % user.vrn))
         self.command(client, ("vat obligations --vrn %s --all "
                               "--to 2018-12-01" % user.vrn))
+        self.command(client, ("vat obligations --vrn %s --all "
+                              "--to 2020-02-29" % user.vrn))
 
     @organisation(TestUserService.MTD_VAT)
     def test_submit_draft(self, client, user):
