@@ -52,6 +52,7 @@ class HmrcClientError(IOError):
     """
 
     def __str__(self):
+        # pylint: disable=no-member
         error = self.error
         if error.errors is None:
             return error.message
