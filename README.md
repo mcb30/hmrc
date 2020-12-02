@@ -1,7 +1,7 @@
 HMRC API client library
 =======================
 
-[![Build Status](https://travis-ci.org/mcb30/hmrc.svg?branch=master)](https://travis-ci.org/mcb30/hmrc)
+[![Build Status](https://travis-ci.com/mcb30/hmrc.svg?branch=master)](https://travis-ci.com/github/mcb30/hmrc)
 [![Coverage Status](https://coveralls.io/repos/github/mcb30/hmrc/badge.svg?branch=master)](https://coveralls.io/github/mcb30/hmrc?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/hmrc/badge/?version=latest)](https://hmrc.readthedocs.io/en/latest/?badge=latest)
 
