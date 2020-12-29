@@ -116,7 +116,7 @@ class VatSubmission(VatReturn):
 class VatConfirmation(VatDataClass):
     """VAT return submission confirmation"""
     processing_date: datetime
-    payment_indicator: VatPaymentIndicator
+    payment_indicator: VatPaymentIndicator = None
     form_bundle_number: str = None
     charge_ref_number: str = None
 
