@@ -55,6 +55,8 @@ class Command:
                             help="Enable debug logging")
         parser.add_argument('-c', '--config', help="Configuration file")
         parser.add_argument('--token', help="Authentication token file")
+        parser.add_argument('--gdpr-consent', action='store_true',
+                            help="Consent to sending fraud prevention headers")
 
     def __call__(self):
 
@@ -83,12 +85,15 @@ class Command:
         if self.args.debug:
             logging.basicConfig(level=logging.DEBUG)
 
+        # Consent to GDPR data collection, if applicable
+        gdpr_consent = self.args.gdpr_consent
+
         # Execute command
         with self.storage as storage:
             token = None if 'access_token' in storage.token else server_token
             with HmrcSession(client_id, client_secret=client_secret,
-                             storage=storage, token=token,
-                             test=test) as session:
+                             storage=storage, token=token, test=test,
+                             gdpr_consent=gdpr_consent) as session:
                 client = self.Client(session, **params)
                 return self.execute(client)
 
