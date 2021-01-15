@@ -14,5 +14,12 @@ class DefraudTest(TestCase):
         """Test fraud prevention headers"""
         msg = client.validate()
         self.assertFalse(msg.errors)
-        self.assertFalse(msg.warnings)
-        self.assertEqual(msg.code, 'VALID_HEADERS')
+        self.assertEqual(len(msg.warnings), 2)
+        self.assertEqual(set(header.lower()
+                             for warning in msg.warnings
+                             for header in warning.headers),
+                         {'gov-client-multi-factor',
+                          'gov-vendor-license-ids'})
+        self.assertEqual(set(warning.code for warning in msg.warnings),
+                         {'EMPTY_HEADER'})
+        self.assertEqual(msg.code, 'POTENTIALLY_INVALID_HEADERS')

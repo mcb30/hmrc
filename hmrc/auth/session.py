@@ -157,11 +157,7 @@ class HmrcSession(OAuth2Session):
             'Gov-Client-Local-IPs': '127.0.0.1',
             'Gov-Client-Local-IPs-Timestamp': timestamp,
             'Gov-Client-MAC-Addresses': quote('52:54:00:12:34:56'),
-            'Gov-Client-Multi-Factor': '&'.join([
-                'type=OTHER',
-                'timestamp=%s' % quote(timestamp),
-                'unique-reference=1',
-            ]),
+            'Gov-Client-Multi-Factor': '',
             'Gov-Client-Screens': '&'.join([
                 'width=1920',
                 'height=1080',
@@ -177,7 +173,7 @@ class HmrcSession(OAuth2Session):
             ]),
             'Gov-Client-User-IDs': 'os=user',
             'Gov-Client-Window-Size': 'width=640&height=480',
-            'Gov-Vendor-License-IDs': 'this=00000000',
+            'Gov-Vendor-License-IDs': '',
             'Gov-Vendor-Product-Name': quote('Python API'),
             'Gov-Vendor-Version': 'hmrc=0.0.1',
         }
