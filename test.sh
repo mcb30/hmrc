@@ -9,6 +9,10 @@ python3 -m coverage erase
 python3 -m coverage run --branch --source hmrc setup.py test
 python3 -m coverage report --show-missing
 
+# Generate XML coverage report
+#
+python3 -m coverage xml
+
 # Run pylint
 #
 # Note that pylint is currently broken on Python 3.8 beta, so run only
