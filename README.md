@@ -1,9 +1,10 @@
 HMRC API client library
 =======================
 
-[![Build Status](https://travis-ci.com/mcb30/hmrc.svg?branch=master)](https://travis-ci.com/github/mcb30/hmrc)
-[![Coverage Status](https://coveralls.io/repos/github/mcb30/hmrc/badge.svg?branch=master)](https://coveralls.io/github/mcb30/hmrc?branch=master)
-[![Documentation Status](https://readthedocs.org/projects/hmrc/badge/?version=latest)](https://hmrc.readthedocs.io/en/latest/?badge=latest)
+[![Build](https://img.shields.io/github/workflow/status/mcb30/hmrc/Build)](https://github.com/mcb30/hmrc/actions?query=workflow%3ABuild+branch%3Amaster)
+[![Coverage](https://img.shields.io/codecov/c/gh/mcb30/hmrc)](https://codecov.io/gh/mcb30/hmrc)
+[![Documentation](https://img.shields.io/readthedocs/hmrc)](https://hmrc.readthedocs.io/en/latest/?badge=latest)
+[![PyPI](https://img.shields.io/pypi/v/hmrc?color=informational)](https://pypi.org/project/hmrc/)
 
 This package provides a Python (3.7+) client library for the [HMRC
 APIs](https://developer.service.hmrc.gov.uk/api-documentation/docs/api).
