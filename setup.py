@@ -31,6 +31,7 @@ setup(
         'setuptools',
         'simplejson',
         'uritemplate',
+        'urllib3',
         'xlrd',
     ],
     entry_points={

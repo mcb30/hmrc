@@ -8,7 +8,9 @@ import socket
 from urllib.parse import urljoin, quote
 import uuid
 import psutil
+from requests.adapters import HTTPAdapter
 from requests_oauthlib import OAuth2Session
+from urllib3.util.retry import Retry
 
 __all__ = [
     'HmrcSession',
@@ -69,7 +71,14 @@ class HmrcSession(OAuth2Session):
         # Record GDPR consent status
         self.gdpr_consent = gdpr_consent or test
 
+        # Call superclass
         super().__init__(client_id, scope=scope, token=token, **kwargs)
+
+        # Configure automatic retries since API is unreliable
+        retries = Retry(status_forcelist=[503])
+        adapter = HTTPAdapter(max_retries=retries)
+        self.mount('https://', adapter)
+        self.mount('http://', adapter)
 
     def __repr__(self):
         return '%s(%r, uri=%r, scope=%r)' % (
