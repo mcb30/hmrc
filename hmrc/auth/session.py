@@ -1,6 +1,7 @@
 """HMRC API session with authorization support"""
 
 from datetime import datetime
+import getpass
 import os
 from pathlib import Path
 import platform
@@ -212,5 +213,5 @@ class HmrcSession(OAuth2Session):
                 'device-manufacturer=%s' % quote(self.dmifile('sys_vendor')),
                 'device-model=%s' % quote(self.dmifile('product_family')),
             ])
-            headers['Gov-Client-User-IDs'] = 'os=%s' % os.getlogin()
+            headers['Gov-Client-User-IDs'] = 'os=%s' % getpass.getuser()
         return headers
