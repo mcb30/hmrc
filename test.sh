@@ -5,9 +5,9 @@ set -x
 
 # Run test suite with coverage checks
 #
-coverage3 erase
-coverage3 run --branch --source hmrc setup.py test
-coverage3 report --show-missing
+python3 -m coverage erase
+python3 -m coverage run --branch --source hmrc setup.py test
+python3 -m coverage report --show-missing
 
 # Run pylint
 #
@@ -20,15 +20,15 @@ cat > .pylint-check.py <<EOF
 from typing import Type
 check = Type
 EOF
-if pylint .pylint-check.py >/dev/null 2>/dev/null ; then
-    pylint hmrc test
+if python3 -m pylint .pylint-check.py >/dev/null 2>/dev/null ; then
+    python3 -m pylint hmrc test
 else
     echo Skipping pylint check
 fi
 
 # Run mypy
 #
-mypy hmrc test
+python3 -m mypy hmrc test
 
 # Run pycodestyle
 #
