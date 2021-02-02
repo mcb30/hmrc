@@ -40,7 +40,7 @@ class TestCase(unittest.TestCase):
         # Retrieve session parameters from test environment
         cls.client_id = os.environ.get(cls.CLIENT_ID, '')
         cls.client_secret = os.environ.get(cls.CLIENT_SECRET, '')
-        cls.server_token = os.environ.get(cls.SERVER_TOKEN, '')
+        cls.server_token = os.environ.get(cls.SERVER_TOKEN, None)
 
         # Construct anonymous and application-authorized clients
         cls.anonymous = cls.Client(HmrcSession(test=True))
@@ -63,9 +63,10 @@ class TestCase(unittest.TestCase):
         parser['DEFAULT'] = {
             'client_id': cls.client_id,
             'client_secret': cls.client_secret,
-            'server_token': cls.server_token,
             'test': True,
         }
+        if cls.server_token:
+            parser['DEFAULT']['server_token'] = cls.server_token
         parser.write(cls.config)
         cls.config.flush()
 
