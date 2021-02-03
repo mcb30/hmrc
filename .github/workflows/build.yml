@@ -16,7 +16,7 @@ jobs:
       - name: Install packages
         run: |
           pip3 install -e .
-          pip3 install coverage coveralls mypy pycodestyle pylint
+          pip3 install coverage mypy pycodestyle pylint
       - name: Test
         run: |
           ./test.sh
