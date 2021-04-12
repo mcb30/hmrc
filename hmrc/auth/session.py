@@ -201,10 +201,11 @@ class HmrcSession(OAuth2Session):
                 UUID_NS, headers['Gov-Client-MAC-Addresses']
             ))
             tzsec = datetime.now().astimezone().utcoffset().total_seconds()
-            if tzsec >= 0:
-                (tzhour, tzmin) = divmod(tzsec, 60)
+            tzmin = tzsec / 60
+            if tzmin >= 0:
+                (tzhour, tzmin) = divmod(tzmin, 60)
             else:
-                (tzhour, tzmin) = divmod(-tzsec, 60)
+                (tzhour, tzmin) = divmod(-tzmin, 60)
                 tzhour = -tzhour
             headers['Gov-Client-Timezone'] = 'UTC%+03d:%02d' % (tzhour, tzmin)
             headers['Gov-Client-User-Agent'] = '&'.join([
