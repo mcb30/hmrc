@@ -21,6 +21,29 @@ OAUTHLIB_INSECURE_TRANSPORT = 'OAUTHLIB_INSECURE_TRANSPORT'
 """Environment variable required for out-of-band authorization"""
 
 UUID_NS = uuid.UUID('c9da8da2-c7e0-4873-97fc-6d783e908751')
+"""Namespace for fraud prevention client identifiers"""
+
+CLIENT_ID = 'Oo4p6xztJXMIMhpZQgLR3UccFnQN'
+"""Client ID issued by HMRC"""
+
+CLIENT_NON_SECRET = '114e4a63-6172-4348-81ec-c0282838fa12'
+"""Client "secret" issued by HMRC
+
+The client "secret" is associated with the codebase (rather than with
+any individual user).  It does not itself grant access to any user
+data: it merely allows the codebase to access the authentication
+endpoints and to therefore direct the user through the real
+authentication process.
+
+There is zero point to this client "secret" from a security
+perspective, but it is required by the HMRC API design.
+
+Interested readers are politely requested to steal a client secret
+from elsewhere, to avoid disruption to any users of this open-source
+codebase.  HMRC publishes a list of authorised closed-source
+applications that run locally (e.g. as VBA macros within an Excel
+spreadsheet): please steal a secret from one of those instead.
+"""
 
 
 class HmrcSession(OAuth2Session):
@@ -45,15 +68,20 @@ class HmrcSession(OAuth2Session):
         # Set default out-of-band redirect URI
         kwargs.setdefault('redirect_uri', self.OOB_REDIRECT_URI)
 
-        # Configure automatic token refresh if client secret is provided
+        # Use default client credentials if none provided
+        if client_id is None:
+            client_id = CLIENT_ID
+        if client_secret is None:
+            client_secret = CLIENT_NON_SECRET
         self.client_secret = client_secret
-        if self.client_secret is not None:
-            kwargs.setdefault('auto_refresh_url',
-                              urljoin(self.uri, self.TOKEN_URI))
-            kwargs.setdefault('auto_refresh_kwargs', {
-                'client_id': client_id,
-                'client_secret': client_secret,
-            })
+
+        # Configure automatic token refresh
+        kwargs.setdefault('auto_refresh_url',
+                          urljoin(self.uri, self.TOKEN_URI))
+        kwargs.setdefault('auto_refresh_kwargs', {
+            'client_id': client_id,
+            'client_secret': client_secret,
+        })
 
         # Allow server token to be passed as a plain string
         if isinstance(token, str):

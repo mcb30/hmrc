@@ -68,8 +68,8 @@ class Command:
 
         # Extract session parameters
         try:
-            client_id = config.get(section, 'client_id')
-            client_secret = config.get(section, 'client_secret')
+            client_id = config.get(section, 'client_id', fallback=None)
+            client_secret = config.get(section, 'client_secret', fallback=None)
             server_token = config.get(section, 'server_token', fallback=None)
             test = config.getboolean(section, 'test', fallback=False)
         except NoOptionError as exc:
