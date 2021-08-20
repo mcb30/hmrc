@@ -16,7 +16,8 @@ jobs:
       - name: Install packages
         run: |
           pip3 install -e .
-          pip3 install coverage mypy pycodestyle pylint
+          pip3 install coverage mypy pycodestyle pylint types-python-dateutil \
+                       types-requests types-setuptools types-simplejson
       - name: Test
         run: |
           ./test.sh
