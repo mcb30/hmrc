@@ -88,7 +88,7 @@ class TestUserAuthClient(WebApplicationClient):
     def prepare_request_body(self, auth_uri, username, password, code=None,
                              **kwargs):
         """Prepare access token request body"""
-        # pylint: disable=arguments-differ,arguments-renamed
+        # pylint: disable=arguments-differ,bad-option-value,arguments-renamed
         if code == DUMMY_AUTH_CODE or not code:
             code = self.authorize(auth_uri, username, password)
         return super().prepare_request_body(code=code, **kwargs)
