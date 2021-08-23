@@ -69,7 +69,7 @@ class CsvCommand(TabularCommand):
 
     @contextmanager
     def data(self):
-        with open(self.args.filename) as f:
+        with open(self.args.filename, encoding='utf8') as f:
             yield csv.reader(f)
 
 

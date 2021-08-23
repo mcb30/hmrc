@@ -69,7 +69,7 @@ class HmrcTokenFileStorage(HmrcTokenStorage):
                 path = os.path.expanduser('~/.hmrc.token')
             fd = os.open(path, (os.O_RDWR | os.O_CREAT),
                          (stat.S_IRUSR | stat.S_IWUSR))
-            self.file = open(fd, 'a+t')
+            self.file = open(fd, 'a+t', encoding='utf8')
 
         super().__post_init__()
 
