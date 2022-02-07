@@ -182,7 +182,7 @@ class HmrcSession(OAuth2Session):
         """Read DMI file contents"""
         try:
             path = Path('/sys/devices/virtual/dmi/id/%s' % filename)
-            return path.read_text().strip() or default
+            return path.read_text(encoding='utf8').strip() or default
         except FileNotFoundError:
             return default
 
