@@ -3,3 +3,6 @@ disable=consider-using-with,invalid-name,too-few-public-methods,too-many-ancesto
 
 [CLASSES]
 defining-attr-methods=__init__,__new__,setUp,__post_init__
+
+[TYPECHECK]
+generated-members=argparse.Namespace.*
