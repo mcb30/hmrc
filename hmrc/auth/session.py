@@ -213,7 +213,7 @@ class HmrcSession(OAuth2Session):
             'Gov-Client-Window-Size': 'width=640&height=480',
             'Gov-Vendor-License-IDs': 'hmrc=497427732047504C2C20626974636821',
             'Gov-Vendor-Product-Name': quote('Python API'),
-            'Gov-Vendor-Version': 'hmrc=1.1.1',
+            'Gov-Vendor-Version': 'hmrc=1.1.2',
         }
         if self.gdpr_consent:
             nics = psutil.net_if_addrs()
