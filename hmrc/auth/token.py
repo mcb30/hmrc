@@ -65,9 +65,10 @@ class HmrcTokenFileStorage(HmrcTokenStorage):
 
         # Open/create file if no explicit file was provided
         if self.file is None:
-            if path is None:
-                path = os.path.expanduser('~/.hmrc.token')
-            fd = os.open(path, (os.O_RDWR | os.O_CREAT),
+            self.path = path
+            if self.path is None:
+                self.path = os.path.expanduser('~/.hmrc.token')
+            fd = os.open(self.path, (os.O_RDWR | os.O_CREAT),
                          (stat.S_IRUSR | stat.S_IWUSR))
             self.file = open(fd, 'a+t', encoding='utf8')
 
