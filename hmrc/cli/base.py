@@ -148,7 +148,7 @@ class LoginCommand(Command):
             uri, _state = session.authorization_url()
             webbrowser.open(uri)
             try:
-                code = input("Enter authorization code from browser: ")
+                code = input("Enter authorization code from browser: ").strip()
             except KeyboardInterrupt as exc:
                 raise SystemExit("Aborted") from exc
 
