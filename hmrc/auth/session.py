@@ -144,10 +144,10 @@ class HmrcSession(OAuth2Session):
         kwargs.setdefault('auth_uri', self.authorization_url()[0])
 
         # Fetch token, allowing for use of out-of-band redirect URI
+        saved = os.environ.get(OAUTHLIB_INSECURE_TRANSPORT)
         try:
 
             # Allow use of out-of-band redirect URI if applicable
-            saved = os.environ.get(OAUTHLIB_INSECURE_TRANSPORT)
             if self.redirect_uri == self.OOB_REDIRECT_URI:
                 os.environ[OAUTHLIB_INSECURE_TRANSPORT] = '1'
 
