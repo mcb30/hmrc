@@ -159,6 +159,5 @@ class LoginCommand(Command):
 class LogoutCommand(Command):
     """Log out from HMRC APIs"""
 
-    @staticmethod
-    def execute(client):
+    def execute(self, client):
         client.session.storage.delete()

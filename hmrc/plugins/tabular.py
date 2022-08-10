@@ -177,9 +177,8 @@ class TabularCommand(Command):
             parser.add_argument(option, dest=column.dest, default=column.name,
                                 help="Column heading for %s" % description)
 
-    @staticmethod
     @contextmanager
-    def data():
+    def data(self):
         """Read input data"""
         yield [()]
 

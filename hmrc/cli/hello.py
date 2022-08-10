@@ -28,22 +28,19 @@ class HelloLoginCommand(HelloCommand, LoginCommand):
 class HelloWorldCommand(HelloCommand):
     """Test endpoint with no authorization"""
 
-    @staticmethod
-    def execute(client):
+    def execute(self, client):
         return client.world().message
 
 
 class HelloApplicationCommand(HelloCommand):
     """Test endpoint with application authorization"""
 
-    @staticmethod
-    def execute(client):
+    def execute(self, client):
         return client.application().message
 
 
 class HelloUserCommand(HelloCommand):
     """Test endpoint with user authorization"""
 
-    @staticmethod
-    def execute(client):
+    def execute(self, client):
         return client.user().message
