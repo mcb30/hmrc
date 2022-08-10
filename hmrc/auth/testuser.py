@@ -65,7 +65,11 @@ class TestUserAuthClient(WebApplicationClient):
             uri, page = self.fetch_auth_page(session, uri)
 
             # Click on the initial "Continue" button
-            href = page.find('.//a[button]').get('href')
+            href = page.find('.//a[@role="button"]').get('href')
+            uri, page = self.fetch_auth_page(session, urljoin(uri, href))
+
+            # Click on the "Sign in to Government Gateway" button
+            href = page.find('.//a[@role="button"]').get('href')
             uri, page = self.fetch_auth_page(session, urljoin(uri, href))
 
             # Submit sign in form
