@@ -124,7 +124,7 @@ class HmrcTypeMap:
                 (getattr(pytype, '__origin__', None) is list)):
             subtype = pytype.__args__[0]
             subtype_from_hmrc = cls.from_hmrc(subtype)
-            return lambda l: [subtype_from_hmrc(x) for x in l]
+            return lambda lst: [subtype_from_hmrc(x) for x in lst]
 
         # Recurse into embedded HmrcDataClass instances
         if hasattr(pytype, 'from_hmrc'):
@@ -151,7 +151,7 @@ class HmrcTypeMap:
                 (getattr(pytype, '__origin__', None) is list)):
             subtype = pytype.__args__[0]
             subtype_to_hmrc = cls.to_hmrc(subtype)
-            return lambda l: [subtype_to_hmrc(x) for x in l]
+            return lambda lst: [subtype_to_hmrc(x) for x in lst]
 
         # Recurse into embedded HmrcDataClass instances
         if hasattr(pytype, 'to_hmrc'):
