@@ -5,7 +5,6 @@ from dataclasses import dataclass, field, fields
 from datetime import date
 from decimal import Decimal
 from operator import itemgetter
-from types import MappingProxyType
 from typing import Callable, ClassVar, Iterable, List, Mapping
 from ..api.vat import VatObligationStatus, VatSubmission
 from ..cli import Command
@@ -88,7 +87,7 @@ class TabularRowReader:
     headings: List[str]
     """Input column headings"""
 
-    mapping: Mapping[str, str] = MappingProxyType({})
+    mapping: Mapping[str, str] = field(default_factory=dict)
     """Mapping from row data class field names to input column headings"""
 
     getters: Mapping[str, Callable] = field(default_factory=dict)
@@ -122,7 +121,7 @@ class TabularReader:
     headings: List[str] = None
     """Input column headings"""
 
-    mapping: Mapping[str, str] = MappingProxyType({})
+    mapping: Mapping[str, str] = field(default_factory=dict)
     """Mapping from output row field names to input column headings"""
 
     RowReader: ClassVar[type] = TabularRowReader
