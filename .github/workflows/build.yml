@@ -29,7 +29,7 @@ jobs:
         run: |
           python3 setup.py sdist bdist_wheel
       - name: Coverage report
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
       - name: Publish to PyPI
         if: startsWith(github.event.ref, 'refs/tags/v')
         uses: pypa/gh-action-pypi-publish@master
