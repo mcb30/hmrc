@@ -19,19 +19,19 @@ class VatTest(TestCase):
         """Test scenario with monthly obligations: 4 fulfilled, 1 open"""
         obligations = client.obligations(
             vrn=user.vrn, from_=date(2018, 1, 1), to=date(2018, 12, 31),
-            scenario='MONTHLY_OBS_05_OPEN',
+            scenario='MONTHLY_OBS_10_OPEN',
         )
-        self.assertEqual(len(obligations.obligations), 5)
+        self.assertEqual(len(obligations.obligations), 10)
         january = obligations.obligations[0]
         self.assertEqual(january.end, date(2018, 1, 31))
         self.assertEqual(january.status, VatObligationStatus.FULFILLED)
         fulfilled = [x for x in obligations.obligations
                      if x.status == VatObligationStatus.FULFILLED]
-        self.assertEqual(len(fulfilled), 4)
-        may = obligations.obligations[-1]
-        self.assertEqual(may.start, date(2018, 5, 1))
-        self.assertEqual(may.due, date(2018, 7, 7))
-        self.assertIsNone(may.received)
+        self.assertEqual(len(fulfilled), 9)
+        october = obligations.obligations[-1]
+        self.assertEqual(october.start, date(2018, 10, 1))
+        self.assertEqual(october.due, date(2018, 12, 7))
+        self.assertIsNone(october.received)
 
     @organisation(TestUserService.MTD_VAT)
     def test_submit_retrieve(self, client, user):
@@ -73,7 +73,10 @@ class VatCommandTest(TestCase):
     @organisation(TestUserService.MTD_VAT)
     def test_monthly_two_met(self, client, user):
         """Test scenario with monthly obligations: 2 fulfilled, 1 open"""
-        cmd = "vat obligations --vrn %s --scenario MONTHLY_TWO_MET" % user.vrn
+        cmd = (
+            "vat obligations --vrn %s --scenario MONTHLY_TWO_MET --all"
+            % user.vrn
+        )
         output = self.command(client, cmd)
         self.assertIn('FULFILLED', output[0])
         self.assertIn('FULFILLED', output[1])
